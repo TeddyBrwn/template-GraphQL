@@ -3,10 +3,7 @@ const User = require("../models/User");
 
 const pubsub = new PubSub();
 
-const resolvers = {
-  Query: {
-    users: async () => await User.find(),
-  },
+const resolversMutation = {
   Mutation: {
     createUser: async (_, { name, email }) => {
       const user = new User({ name, email });
@@ -38,17 +35,6 @@ const resolvers = {
       return user;
     },
   },
-  Subscription: {
-    userCreated: {
-      subscribe: () => pubsub.asyncIterator(["USER_CREATED"]),
-    },
-    userUpdated: {
-      subscribe: () => pubsub.asyncIterator(["USER_UPDATED"]),
-    },
-    userDeleted: {
-      subscribe: () => pubsub.asyncIterator(["USER_DELETED"]),
-    },
-  },
 };
 
-module.exports = resolvers;
+module.exports = resolversMutation;

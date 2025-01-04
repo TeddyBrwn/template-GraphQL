@@ -7,7 +7,9 @@ const { useServer } = require("graphql-ws/lib/use/ws");
 const { WebSocketServer } = require("ws");
 const mongoose = require("mongoose");
 const typeDefs = require("./graphql/schema");
-const resolvers = require("./graphql/resolvers");
+const resolversQuery = require("./graphql/resolversQuery");
+const resolversMutation = require("./graphql/resolversMutation");
+const resolversSubsciption = require("./graphql/resolversSubsciption");
 const bodyParser = require("body-parser");
 
 require("dotenv").config();
@@ -19,7 +21,11 @@ const startServer = async () => {
   // Tạo schema GraphQL
   const schema = makeExecutableSchema({
     typeDefs,
-    resolvers,
+    resolvers: {
+      Query: { ...resolversQuery.Query }, // Query
+      Mutation: { ...resolversMutation.Mutation }, // Mutation
+      Subscription: { ...resolversSubsciption.Subscription }, // Subscription
+    },
   });
 
   // Tạo server HTTP
@@ -29,7 +35,7 @@ const startServer = async () => {
   // Tạo WebSocketServer cho Subscription
   const wsServer = new WebSocketServer({
     server: httpServer,
-    path: "/graphql",
+    path: "/template-graphql",
   });
 
   // Sử dụng graphql-ws với WebSocketServer
@@ -47,7 +53,9 @@ const startServer = async () => {
 
   // Khởi động HTTP server
   httpServer.listen(4000, () => {
-    console.log("🟢 Server running at http://localhost:4000/graphql 🚀");
+    console.log(
+      "🟢 Server running at http://localhost:4000/template-graphql 🚀"
+    );
   });
 };
 
